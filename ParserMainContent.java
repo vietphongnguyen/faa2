@@ -31,32 +31,55 @@ public class ParserMainContent {
 		FileInputStream stream = null;
 		
 		fileNameString = fileNameString.toLowerCase();
-		
-		if (fileNameString.endsWith(".doc")) {
-			ParserMainContentDOC mainContent = new ParserMainContentDOC(fileNameString);
-			text = mainContent.getText();
-		}
-		else { // Use Auto Detect Parser for any other type of document
-			BodyContentHandler handler = new BodyContentHandler();
-
-	        AutoDetectParser parser = new AutoDetectParser();
-	        metadata = new Metadata();
-	        
-			
+		boolean properFileName = checkProperFileName(fileNameString);
+		if (properFileName && fileNameString.endsWith(".doc")) {
+			ParserMainContentDOC mainContent;
 			try {
-				stream = new FileInputStream(fileNameString);
-	            parser.parse(stream, handler, metadata);
-			} catch (Exception e) {
+				mainContent = new ParserMainContentDOC(fileNameString,1); // level Of Extraction = 1
+				text = mainContent.getText().trim();
+				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
+			} catch (IOException e) {
 				
-			} finally {
-				try {
-					stream.close();
-				} catch (IOException e) { 	}
+				e.printStackTrace();
 			}
-			text = handler.toString().trim();
+			
 		}
 		
+		// Use Auto Detect Parser for any other type of document
+		BodyContentHandler handler = new BodyContentHandler();
+
+		AutoDetectParser parser = new AutoDetectParser();
+		metadata = new Metadata();
+
+		try {
+			stream = new FileInputStream(fileNameString);
+			parser.parse(stream, handler, metadata);
+		} catch (Exception e) {
+
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException e) {
+			}
+		}
+		text = handler.toString().trim();
 		 
+	}
+
+	private boolean checkProperFileName(String fileNameString) {
+		boolean OK = true; 
+		for (int i = 0; i< fileNameString.length(); i++) {
+			if (	!Character.isLetterOrDigit(fileNameString.charAt(i))	
+					&& fileNameString.charAt(i) != ' ' && fileNameString.charAt(i) != '\\' && fileNameString.charAt(i) != ':'
+					&& fileNameString.charAt(i) != '.' && fileNameString.charAt(i) != '_'&& fileNameString.charAt(i) != '-' 
+					&& fileNameString.charAt(i) != '/'			)  {
+				OK = false;
+				break;
+			}
+			
+		}
+		
+		return OK;
 	}
 
 	/**
