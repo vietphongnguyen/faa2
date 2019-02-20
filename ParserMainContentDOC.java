@@ -25,30 +25,37 @@ import org.apache.sis.util.Characters;
  */
 
 public class ParserMainContentDOC {
+	public static final int DefaultLevelOfExtraction = 1000;
+	public static final int DefaultMaxNoCharacters = 10000;
+	
 	String text = "";
 	int levelOfExtraction  ; 
 	int maxNoCharacters ; 
 	
+	public String header = "";
+	public String footer = "";
 	
 	/**
 	 * 
 	 */
 	public ParserMainContentDOC(String fileNameString) throws IOException {
-		this(fileNameString,1000); // default level Of Extraction = 1000
+		this(fileNameString,DefaultLevelOfExtraction); // default level Of Extraction
 	}
 	public ParserMainContentDOC(String fileNameString,int levelSet) throws IOException {
-		this(fileNameString,levelSet, 10000); // default maxNoCharacters = 10000
+		this(fileNameString,levelSet, DefaultMaxNoCharacters); // default maxNoCharacters 
 	}
 
 	public ParserMainContentDOC(String fileNameString,int levelSet, int maxChar) throws IOException {
 		levelOfExtraction = levelSet;
 		maxNoCharacters = maxChar;
-		
+		RemoveHeaderFooterStopwords.init("HeaderFooterStopwords.txt");
 		FileInputStream fis = new FileInputStream(fileNameString);
 		HWPFDocument doc = new HWPFDocument(fis);
 		WordExtractor we = new WordExtractor(doc);
 		Range range = doc.getRange();
 
+		// ********** Collect the most frequent Header ****************/
+		
 		HeaderStories headerStore = new HeaderStories(doc);
 		int pageCount = we.getSummaryInformation().getPageCount();
 
@@ -57,6 +64,7 @@ public class ParserMainContentDOC {
 		int value;
 		for (int i=1; i<= pageCount; i++) {
 			String key = headerStore.getHeader(i).trim();
+			key = RemoveHeaderFooterStopwords.removeStopwords(key);
 			if (key.isEmpty()) continue;
 			if (headerMap.containsKey(key) ) 
 				value = headerMap.get(key)+1; 
@@ -70,18 +78,24 @@ public class ParserMainContentDOC {
 		for (Map.Entry<String, Integer> entry : headerMap.entrySet()) {
 		    String key = entry.getKey();
 		    value = entry.getValue();
-		    if (value == max) {
+		    if (value >= max) {
 		    	//System.out.println(key);
-		    	
-		    	text +=  key + ". ";
+		    	header +=  key + "\n";
 		    }
 		}
-		text += "\n";
-		// Get the most common footer
+		
+		
+		// ********** Collect the most frequent Footer ****************/
+
 		HashMap <String, Integer> footerMap = new HashMap<>();
 		max =0;
 		for (int i=1; i<= pageCount; i++) {
 			String key = headerStore.getFooter(i).trim();
+			
+			//System.out.print("Key = " + key);
+			key = RemoveHeaderFooterStopwords.removeStopwords(key);
+			//System.out.println(" --> Key = " + key);
+			
 			if (key.isEmpty()) continue;
 			if (footerMap.containsKey(key) ) 
 				value = footerMap.get(key)+1; 
@@ -95,15 +109,14 @@ public class ParserMainContentDOC {
 		for (Map.Entry<String, Integer> entry : footerMap.entrySet()) {
 		    String key = entry.getKey();
 		    value = entry.getValue();
-		    if (value == max) {
+		    if (value >= max) {
 		    	//System.out.println(key);
-		    	text +=  key + ". ";
+		    	footer +=  key + "\n";
 		    }
 		}
-		text += "\n";
 		
-		int defaultFontSize = 22;
-				//document.getStyles().getDefaultRunStyles().getFontSize();
+		
+		// ********** Collect the biggest paragraph in the content ****************/
 			
 		String[] paragraphs = we.getParagraphText();
 		HashMap <Integer,String> textDataLevel = new HashMap<>();
@@ -115,11 +128,11 @@ public class ParserMainContentDOC {
 			while (true) {
 				CharacterRun run = pr.getCharacterRun(k++);
 				int fontSize = run.getFontSize();
-				String text = run.text().trim();
-				if (!text.equals("")) {
+				String s = run.text().trim();
+				if (!s.equals("")) {
 					if (textDataLevel.containsKey(fontSize))						
-						textDataLevel.put(fontSize, textDataLevel.get(fontSize) + text + ". " );
-					else textDataLevel.put(fontSize, text + ". " );
+						textDataLevel.put(fontSize, textDataLevel.get(fontSize) + s + ". " );
+					else textDataLevel.put(fontSize, s + ". " );
 				}
 				if (run.getEndOffset() == pr.getEndOffset())
 					break;
@@ -136,37 +149,38 @@ public class ParserMainContentDOC {
         sorted.putAll(textDataLevel); 
  
         // Display the TreeMap which is naturally sorted 
-        int level = 0;
+        int currentLevel = 0;
         for (Entry<Integer, String> entry : sorted.entrySet()) {  
+            int remainCharacters = maxNoCharacters - text.length();
+            if (remainCharacters <=0 ) break;
+            
             String s;
             s = entry.getValue().trim();
-            System.out.println("Key = " + entry.getKey() + ", Value = " + s);
-            int remain = maxNoCharacters - text.length();
-            if (remain <=0 ) break;
-            
-            if (s.length() <= remain ) 
-            	text += s + " ";
+            //System.out.println("Key = " + entry.getKey() + ", Value = " + s);
+            if (s.length() <= remainCharacters ) 
+            	text += s + ". ";
             else {
-            	String add =  s.substring(0, remain );
-            	System.out.println("add = " + add);
+            	String add =  s.substring(0, remainCharacters );
+            	//System.out.println("add = " + add);
             	try {
-					if (	Character.isLetter(s.charAt(remain)) && Character.isLetter(s.charAt(remain-1))	) { // cut in the midle of a word
+					if (	Character.isLetter(s.charAt(remainCharacters)) 
+							&& Character.isLetter(s.charAt(remainCharacters-1))	) { // cut in the midle of a word
 						int lastSpace = add.length()-1;
 						while (	Character.isLetter(add.charAt(Integer.max(lastSpace,0))) && (lastSpace>=0)	) {
 							lastSpace --;
 						}
 						if (lastSpace<0) add = "";
-						else add = add.substring(0, lastSpace);
+						else add = add.substring(0, lastSpace).trim();
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
             	
-            	text += add + " ";
+            	text += add + ". ";
             	break;
             }
-            level ++;
-            if (level >= levelOfExtraction ) break;
+            currentLevel ++;
+            if (currentLevel >= levelOfExtraction ) break;
         }
 		
 	}
@@ -178,6 +192,8 @@ public class ParserMainContentDOC {
 		String fileName = "C:\\FAA2\\data\\55146001\\CDG\\Final-ATCS CDG_2.doc";
 		try {
 			ParserMainContentDOC content = new ParserMainContentDOC(fileName,10,885);
+			System.out.println("Header = " + content.header);
+			System.out.println("Footer = " + content.footer);
 			System.out.println("Text = " + content.getText());
 
 		} catch (IOException e) {

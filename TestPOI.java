@@ -52,7 +52,7 @@ public class TestPOI {
 	 */
 	public static void main(String[] args) throws FileNotFoundException, IOException, OpenXML4JException, XmlException {
 
-		String fileName = "C:\\FAA2\\data\\55146001\\CDG\\Final-ATCS CDG_2.doc";
+		String fileName = "C:\\FAA2\\data\\57017\\CDG_57017.docx";
 		FileInputStream fis = new FileInputStream(fileName);
 
 		fileName = fileName.toLowerCase();
@@ -67,6 +67,10 @@ public class TestPOI {
 		} else if (fileName.endsWith(".docx")) {
 			XWPFDocument docx = new XWPFDocument(POIXMLDocument.openPackage(fileName));
 			int pageCount = docx.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+			
+			
+			
+			
 		} else if (fileName.endsWith(".doc")) {
 			
 			HWPFDocument doc = new HWPFDocument(fis);

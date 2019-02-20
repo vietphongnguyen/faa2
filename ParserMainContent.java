@@ -16,34 +16,41 @@ import org.apache.tika.sax.BodyContentHandler;
  */
 public class ParserMainContent {
 
-	String text="";
+	String text = "";
 	Metadata metadata;
 
 	/**
 	 * 
 	 */
-	public ParserMainContent() {
-		// TODO Auto-generated constructor stub
-	}
-
 	public ParserMainContent(String fileNameString) {
-		
+		RemoveHeaderFooterStopwords.init("HeaderFooterStopwords.txt");
 		FileInputStream stream = null;
 		
 		fileNameString = fileNameString.toLowerCase();
 		boolean properFileName = checkProperFileName(fileNameString);
+		
 		if (properFileName && fileNameString.endsWith(".doc")) {
 			ParserMainContentDOC mainContent;
 			try {
-				mainContent = new ParserMainContentDOC(fileNameString,1); // level Of Extraction = 1
-				text = mainContent.getText().trim();
+				mainContent = new ParserMainContentDOC(fileNameString,2); // level Of Extraction = 2
+				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
-				
 				e.printStackTrace();
 			}
-			
 		}
+
+		if (fileNameString.endsWith(".docx")) {
+			ParserMainContentDOCX mainContent;
+			try {
+				mainContent = new ParserMainContentDOCX(fileNameString,2); // level Of Extraction = 2
+				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
+				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		
 		// Use Auto Detect Parser for any other type of document
 		BodyContentHandler handler = new BodyContentHandler();
@@ -59,8 +66,7 @@ public class ParserMainContent {
 		} finally {
 			try {
 				stream.close();
-			} catch (IOException e) {
-			}
+			} catch (IOException e) {}
 		}
 		text = handler.toString().trim();
 		 

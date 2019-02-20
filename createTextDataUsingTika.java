@@ -2,7 +2,6 @@ package indexDocs;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -17,12 +16,12 @@ import javax.swing.SwingWorker;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.tika.exception.TikaException;
-import org.apache.tika.language.LanguageIdentifier;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.sax.BodyContentHandler;
+import org.apache.tika.langdetect.OptimaizeLangDetector;
+import org.apache.tika.language.detect.LanguageDetector;
+import org.apache.tika.language.detect.LanguageResult;
 import org.xml.sax.SAXException;
 
+@SuppressWarnings("rawtypes")
 class createTextDataUsingTika extends SwingWorker {
 
 	String InputFolderName;
@@ -36,6 +35,7 @@ class createTextDataUsingTika extends SwingWorker {
 		OutputFolderName = outputFolderName;
 		}
 	
+	@SuppressWarnings("unchecked")
 	protected Object doInBackground() throws Exception {
 		String inputFolderName = InputFolderName;
 		String outputFolderName = OutputFolderName;
@@ -98,7 +98,11 @@ class createTextDataUsingTika extends SwingWorker {
 				
 				String outputFileName = toFileName(fileNameString);
 				if (IndexDocsGUI.chckbxEnglishOnly.isSelected() ) {
-					String language = identifyLanguage(s);
+
+					LanguageDetector detector = new OptimaizeLangDetector().loadModels();
+			        LanguageResult result = detector.detect(s);
+			        String language = result.getLanguage();
+			        
 					// System.out.println("Language of text:" + language);
 					if ((!(language.equalsIgnoreCase("en") || language.equalsIgnoreCase("et")))) {
 						igroreExtractingFile("Warning: the content of the file:" + outputFileName + " have NOT been writen in English then this file will be ignored!",
@@ -142,6 +146,7 @@ class createTextDataUsingTika extends SwingWorker {
 		return 0 ;
     }
 	
+	@SuppressWarnings("unchecked")
 	private void igroreExtractingFile(String lineOutputInConsole, String lineAddedInGUIList) {
 		Outln(lineOutputInConsole );
 		fileValues[count] =  lineAddedInGUIList + "________ IGNORED ";
@@ -185,9 +190,4 @@ class createTextDataUsingTika extends SwingWorker {
 	}
 	
 	
-	public static String identifyLanguage(String text) {
-		LanguageIdentifier identifier = new LanguageIdentifier(text);
-		return identifier.getLanguage();
-	}
-
 }
