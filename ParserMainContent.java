@@ -32,7 +32,7 @@ public class ParserMainContent {
 		if (properFileName && fileNameString.endsWith(".doc")) {
 			ParserMainContentDOC mainContent;
 			try {
-				mainContent = new ParserMainContentDOC(fileNameString,2); // level Of Extraction = 2
+				mainContent = new ParserMainContentDOC(fileNameString,2,100); // level Of Extraction = 2
 				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
@@ -43,7 +43,7 @@ public class ParserMainContent {
 		if (fileNameString.endsWith(".docx")) {
 			ParserMainContentDOCX mainContent;
 			try {
-				mainContent = new ParserMainContentDOCX(fileNameString,2); // level Of Extraction = 2
+				mainContent = new ParserMainContentDOCX(fileNameString,2,100); // level Of Extraction = 2
 				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
@@ -51,6 +51,16 @@ public class ParserMainContent {
 			}
 		}
 		
+		if (fileNameString.endsWith(".pdf")) {
+			ParserMainContentPDF mainContent;
+			try {
+				mainContent = new ParserMainContentPDF(fileNameString,2,100); // level Of Extraction = 2
+				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
+				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		// Use Auto Detect Parser for any other type of document
 		BodyContentHandler handler = new BodyContentHandler();
