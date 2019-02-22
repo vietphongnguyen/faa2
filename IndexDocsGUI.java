@@ -137,6 +137,13 @@ public class IndexDocsGUI extends JFrame {
 	static int SizeOfInstance;
 	private JMenuItem mntmSaveAllText;
 	public static JCheckBox chckbxEnglishOnly;
+	private JLayeredPane layeredPane_1;
+	private JLabel lblLevelOfText;
+	public static JSpinner spinnerLevelTextSize;
+	private JLabel lblMaxNumberOf;
+	public static JSpinner spinnerMaxCharacter;
+	public static JSpinner spinnerToPage;
+	public static JSpinner spinnerFromPage;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void initComponents() {
@@ -264,10 +271,10 @@ public class IndexDocsGUI extends JFrame {
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 490, GroupLayout.PREFERRED_SIZE)
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)
 					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
 					.addGap(20))
 		);
 
@@ -332,17 +339,52 @@ public class IndexDocsGUI extends JFrame {
 		
 		chckbxEnglishOnly = new JCheckBox("Extract English documents only");
 		chckbxEnglishOnly.setEnabled(false);
+		
+		JLabel lblNewLabel = new JLabel("From Page");
+		
+		spinnerFromPage = new JSpinner();
+		spinnerFromPage.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				// If from page change its value then update the to page value too
+				if (	(int)	spinnerToPage.getValue() < 	(int)	spinnerFromPage.getValue()	)
+					spinnerToPage.setValue((int)spinnerFromPage.getValue());
+				
+			}
+		});
+		spinnerFromPage.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
+		
+		JLabel lblTo = new JLabel("To");
+		
+		spinnerToPage = new JSpinner();
+		spinnerToPage.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				// If from page change its value then update the from page value too
+				if (	(int)	spinnerToPage.getValue() < 	(int)	spinnerFromPage.getValue()	)
+					spinnerFromPage.setValue((int)spinnerToPage.getValue());
+			}
+		});
+		spinnerToPage.setModel(new SpinnerNumberModel(new Integer(10), new Integer(1), null, new Integer(1)));
+		
+		lblLevelOfText = new JLabel("Level of text size");
+		
+		spinnerLevelTextSize = new JSpinner();
+		spinnerLevelTextSize.setModel(new SpinnerNumberModel(new Integer(3), new Integer(1), null, new Integer(1)));
+		
+		lblMaxNumberOf = new JLabel("Max number of Characters");
+		
+		spinnerMaxCharacter = new JSpinner();
+		spinnerMaxCharacter.setModel(new SpinnerNumberModel(new Integer(500), new Integer(10), null, new Integer(10)));
 		GroupLayout gl_layeredPane = new GroupLayout(layeredPane);
 		gl_layeredPane.setHorizontalGroup(
 			gl_layeredPane.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_layeredPane.createSequentialGroup()
 					.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_layeredPane.createSequentialGroup()
-							.addGap(10)
-							.addComponent(lblFilesAndDocuments, GroupLayout.PREFERRED_SIZE, 121, GroupLayout.PREFERRED_SIZE)
-							.addGap(11)
-							.addComponent(lblDefaultOutputText, GroupLayout.PREFERRED_SIZE, 162, GroupLayout.PREFERRED_SIZE)
-							.addGap(10)
+							.addContainerGap()
+							.addComponent(lblFilesAndDocuments, GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE)
+							.addGap(48)
+							.addComponent(lblDefaultOutputText, GroupLayout.PREFERRED_SIZE, 164, GroupLayout.PREFERRED_SIZE)
+							.addGap(107)
 							.addComponent(tglbtnUsedefaultdatatext, GroupLayout.PREFERRED_SIZE, 28, GroupLayout.PREFERRED_SIZE)
 							.addGap(10)
 							.addComponent(txtDatatextfolder, GroupLayout.PREFERRED_SIZE, 304, GroupLayout.PREFERRED_SIZE)
@@ -362,8 +404,25 @@ public class IndexDocsGUI extends JFrame {
 									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 									.addComponent(btnGetFiles, GroupLayout.PREFERRED_SIZE, 99, GroupLayout.PREFERRED_SIZE)))
 							.addGap(48)
-							.addComponent(btnExtractTextContents, GroupLayout.PREFERRED_SIZE, 304, GroupLayout.PREFERRED_SIZE))
-						.addGroup(Alignment.TRAILING, gl_layeredPane.createSequentialGroup()
+							.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING, false)
+								.addGroup(Alignment.TRAILING, gl_layeredPane.createSequentialGroup()
+									.addComponent(lblNewLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addGap(18)
+									.addComponent(spinnerFromPage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addGap(18)
+									.addComponent(lblTo, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE)
+									.addGap(18)
+									.addComponent(spinnerToPage, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE))
+								.addComponent(btnExtractTextContents, GroupLayout.PREFERRED_SIZE, 242, GroupLayout.PREFERRED_SIZE))
+							.addGap(33)
+							.addComponent(lblLevelOfText, GroupLayout.PREFERRED_SIZE, 105, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(spinnerLevelTextSize, GroupLayout.PREFERRED_SIZE, 31, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addComponent(lblMaxNumberOf, GroupLayout.PREFERRED_SIZE, 167, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(spinnerMaxCharacter, GroupLayout.PREFERRED_SIZE, 44, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_layeredPane.createSequentialGroup()
 							.addGroup(gl_layeredPane.createParallelGroup(Alignment.TRAILING)
 								.addGroup(gl_layeredPane.createSequentialGroup()
 									.addGap(10)
@@ -379,10 +438,6 @@ public class IndexDocsGUI extends JFrame {
 			gl_layeredPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_layeredPane.createSequentialGroup()
 					.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(lblFilesAndDocuments, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
-						.addGroup(gl_layeredPane.createSequentialGroup()
-							.addGap(7)
-							.addComponent(lblDefaultOutputText, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE))
 						.addGroup(gl_layeredPane.createSequentialGroup()
 							.addGap(4)
 							.addComponent(tglbtnUsedefaultdatatext, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE))
@@ -390,23 +445,44 @@ public class IndexDocsGUI extends JFrame {
 							.addGap(4)
 							.addGroup(gl_layeredPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(txtDatatextfolder, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(chckbxEnglishOnly))))
+								.addComponent(chckbxEnglishOnly)))
+						.addComponent(lblFilesAndDocuments, GroupLayout.PREFERRED_SIZE, 26, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_layeredPane.createSequentialGroup()
+							.addGap(7)
+							.addComponent(lblDefaultOutputText, GroupLayout.PREFERRED_SIZE, 14, GroupLayout.PREFERRED_SIZE)))
 					.addGap(10)
 					.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING)
 						.addComponent(scrollPane_1, GroupLayout.PREFERRED_SIZE, 321, GroupLayout.PREFERRED_SIZE)
 						.addComponent(scrollPane_2, GroupLayout.PREFERRED_SIZE, 325, GroupLayout.PREFERRED_SIZE))
-					.addGap(10)
 					.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnNew)
-						.addComponent(btnCheck)
-						.addComponent(btnBrowse)
 						.addGroup(gl_layeredPane.createSequentialGroup()
-							.addGap(1)
+							.addGap(10)
+							.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnNew)
+								.addComponent(btnCheck)
+								.addComponent(btnBrowse)))
+						.addGroup(gl_layeredPane.createSequentialGroup()
+							.addGap(11)
 							.addComponent(btnExtractTextContents)))
-					.addGap(10)
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(btnGetFiles)
-						.addComponent(btnSave))
+						.addGroup(gl_layeredPane.createSequentialGroup()
+							.addGap(10)
+							.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(btnGetFiles)
+								.addComponent(btnSave)))
+						.addGroup(gl_layeredPane.createParallelGroup(Alignment.BASELINE)
+							.addComponent(lblLevelOfText, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+							.addComponent(spinnerToPage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(lblTo, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+							.addComponent(spinnerFromPage, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGroup(gl_layeredPane.createSequentialGroup()
+							.addGap(2)
+							.addGroup(gl_layeredPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(spinnerLevelTextSize, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addComponent(lblMaxNumberOf, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+								.addComponent(spinnerMaxCharacter, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+						.addComponent(lblNewLabel, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addGroup(gl_layeredPane.createParallelGroup(Alignment.LEADING, false)
 						.addComponent(progressBar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -414,6 +490,9 @@ public class IndexDocsGUI extends JFrame {
 					.addContainerGap())
 		);
 		layeredPane.setLayout(gl_layeredPane);
+		
+		layeredPane_1 = new JLayeredPane();
+		tabbedPane.addTab("Content Parser ", null, layeredPane_1, null);
 
 		compositionTable = new DefaultTableModel(new Object[][] {
 
@@ -697,5 +776,4 @@ public class IndexDocsGUI extends JFrame {
 			}
 		});
 	}
-
 }

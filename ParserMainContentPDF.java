@@ -64,8 +64,12 @@ public class ParserMainContentPDF extends PDFTextStripper
             }
 			
 			setSortByPosition(true);
-			setStartPage(0);
-			setEndPage( document.getNumberOfPages() );
+			
+			int fromPage = (int) IndexDocsGUI.spinnerFromPage.getValue();
+			int toPage = (int) IndexDocsGUI.spinnerToPage.getValue();
+			setStartPage(fromPage-1);
+			setEndPage( Math.min(toPage,document.getNumberOfPages()) );
+			
 			Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
 			writeText(document, dummy);
 			

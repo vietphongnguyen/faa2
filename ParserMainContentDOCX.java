@@ -126,7 +126,17 @@ public class ParserMainContentDOCX {
 		int defaultFontSize = document.getStyles().getDefaultRunStyle().getFontSize();
 		HashMap <Integer,String> textDataLevel = new HashMap<>();
 		
+		int fromPage = (int) IndexDocsGUI.spinnerFromPage.getValue();
+		int toPage = (int) IndexDocsGUI.spinnerToPage.getValue();
+		
+		int pageNumber=1;
 		for (XWPFParagraph para : paragraphs) {
+			if (para.isPageBreak()) {
+				pageNumber++;
+				if (pageNumber > toPage) break;
+			}
+			if (pageNumber < fromPage) continue;
+			
 			String s = para.getText().trim();
 			if (s.equals(""))
 				continue;

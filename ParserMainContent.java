@@ -18,7 +18,9 @@ public class ParserMainContent {
 
 	String text = "";
 	Metadata metadata;
-
+	int levelOfExtraction = 4 ; 
+	int maxNoCharacters = 500 ; 
+	
 	/**
 	 * 
 	 */
@@ -26,13 +28,16 @@ public class ParserMainContent {
 		RemoveHeaderFooterStopwords.init("HeaderFooterStopwords.txt");
 		FileInputStream stream = null;
 		
+		levelOfExtraction = (int) IndexDocsGUI.spinnerLevelTextSize.getValue();
+		maxNoCharacters= (int) IndexDocsGUI.spinnerMaxCharacter.getValue();
+		
 		fileNameString = fileNameString.toLowerCase();
 		boolean properFileName = checkProperFileName(fileNameString);
 		
 		if (properFileName && fileNameString.endsWith(".doc")) {
 			ParserMainContentDOC mainContent;
 			try {
-				mainContent = new ParserMainContentDOC(fileNameString,2,100); // level Of Extraction = 2
+				mainContent = new ParserMainContentDOC(fileNameString,levelOfExtraction,maxNoCharacters); // level Of Extraction = 2
 				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
@@ -43,7 +48,7 @@ public class ParserMainContent {
 		if (fileNameString.endsWith(".docx")) {
 			ParserMainContentDOCX mainContent;
 			try {
-				mainContent = new ParserMainContentDOCX(fileNameString,2,100); // level Of Extraction = 2
+				mainContent = new ParserMainContentDOCX(fileNameString,levelOfExtraction,maxNoCharacters); // level Of Extraction = 2
 				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
@@ -54,7 +59,7 @@ public class ParserMainContent {
 		if (fileNameString.endsWith(".pdf")) {
 			ParserMainContentPDF mainContent;
 			try {
-				mainContent = new ParserMainContentPDF(fileNameString,2,100); // level Of Extraction = 2
+				mainContent = new ParserMainContentPDF(fileNameString,levelOfExtraction,maxNoCharacters); // level Of Extraction = 2
 				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
@@ -79,6 +84,14 @@ public class ParserMainContent {
 			} catch (IOException e) {}
 		}
 		text = handler.toString().trim();
+		if (text.length() > maxNoCharacters) {
+			int vt = maxNoCharacters;
+			try {
+				while (Character.isLetter(text.charAt(vt))) vt--;
+				text = text.substring(0, vt);
+			} catch (Exception e) {	}
+		}
+		
 		 
 	}
 

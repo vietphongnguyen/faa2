@@ -58,7 +58,7 @@ public class ParserMainContentDOC {
 		
 		HeaderStories headerStore = new HeaderStories(doc);
 		int pageCount = we.getSummaryInformation().getPageCount();
-
+		
 		HashMap <String, Integer> headerMap = new HashMap<>();
 		int max =0;
 		int value;
@@ -120,10 +120,25 @@ public class ParserMainContentDOC {
 			
 		String[] paragraphs = we.getParagraphText();
 		HashMap <Integer,String> textDataLevel = new HashMap<>();
+		int fromPage=1, toPage=10;
+		try {
+			fromPage = (int) IndexDocsGUI.spinnerFromPage.getValue();
+			toPage = (int) IndexDocsGUI.spinnerToPage.getValue();
+		} catch (Exception e1) { }
 		
+		int pageNumber=1;
 		for (int i = 0; i < paragraphs.length; i++) {
+			
 			Paragraph pr = range.getParagraph(i);
-			//System.out.println("-------------- paragraphs : " + i );
+			int estimatedCurPageNumber = (int) ( (pageCount-1) * i / (paragraphs.length-1) + 1 );
+			if (pr.pageBreakBefore()) {
+				pageNumber++;
+				if (Math.min(pageNumber,estimatedCurPageNumber) > toPage) break;
+			}
+			if (Math.max(pageNumber,estimatedCurPageNumber) < fromPage) continue;	
+			
+			//System.out.println("paragraphs : " + i +" pageBreakBefore = " + pr.pageBreakBefore()+" " + pr.text());
+			
 			int k = 0;
 			while (true) {
 				CharacterRun run = pr.getCharacterRun(k++);
@@ -191,7 +206,7 @@ public class ParserMainContentDOC {
 	public static void main(String[] args) {
 		String fileName = "C:\\FAA2\\data\\55146001\\CDG\\Final-ATCS CDG_2.doc";
 		try {
-			ParserMainContentDOC content = new ParserMainContentDOC(fileName,10,885);
+			ParserMainContentDOC content = new ParserMainContentDOC(fileName);
 			System.out.println("Header = " + content.header);
 			System.out.println("Footer = " + content.footer);
 			System.out.println("Text = " + content.getText());
