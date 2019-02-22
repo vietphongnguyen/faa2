@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -165,6 +166,16 @@ public class ParserMainContentDOCX {
 			}
 		}
 
+		// Remove the entry with no Letter in its value
+				Iterator<Entry<Integer, String>> i = textDataLevel.entrySet().iterator();
+				Map.Entry<Integer, String> me;
+				while(i.hasNext()) {
+					me = i.next();
+		            if ( TextProcessing.containNoLetter((String) me.getValue()	)	) {
+		                i.remove();
+		            }
+		        }
+				
 		// Display the TreeMap which is naturally sorted
 		int level = 0;
 		for (Entry<Integer, String> entry : textDataLevel.entrySet()) {

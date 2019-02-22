@@ -7,7 +7,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -33,7 +35,6 @@ public class ParserMainContentPDF extends PDFTextStripper
 	public String header = "";
 	public String footer = "";
 	
-	//HashMap <Integer,String> textDataLevel = new HashMap<>();
 	TreeMap<Integer, String> textDataLevel = new TreeMap<>((Collections.reverseOrder()));
 	
 	/**
@@ -129,12 +130,19 @@ public class ParserMainContentPDF extends PDFTextStripper
 		int level = 0;
 		String s;
 		text ="";
+
+		// Remove the entry with no Letter in its value
+		Iterator<Entry<Integer, String>> i = textDataLevel.entrySet().iterator();
+		Map.Entry<Integer, String> me;
+		while(i.hasNext()) {
+			me = i.next();
+            if ( TextProcessing.containNoLetter((String) me.getValue()	)	) {
+                i.remove();
+            }
+        }
+		
 		for (Entry<Integer, String> entry : textDataLevel.entrySet()) {
 			s = entry.getValue().trim();
-			if (TextProcessing.containNoLetter(s)) {
-				textDataLevel.remove(entry.getKey());
-				continue;
-			}
 			
 			//System.out.println("Key = " + entry.getKey() + ", Value = " + s);
 			int remain = maxNoCharacters - text.length();
@@ -175,11 +183,11 @@ public class ParserMainContentPDF extends PDFTextStripper
     {
     	String fileName1 = "C:\\FAA2\\data\\60004807\\PDFs\\JO7110.65.pdf";
 		String fileName2 = "C:\\FAA2\\data\\60004807\\PDFs\\N_JO_7110.626.pdf";
+		String fileName3 = "C:\\FAA2\\data\\60004807\\PDFs\\JO7110.65_2-1-19.pdf";
 		
-		
-		String fileName = fileName2; // file to parser
+		String fileName = fileName3; // file to parser
 		try {
-			ParserMainContentPDF content = new ParserMainContentPDF(fileName,4);
+			ParserMainContentPDF content = new ParserMainContentPDF(fileName,2);
 			//System.out.println("Header = " + content.header);
 			//System.out.println("Footer = " + content.footer);
 			System.out.println("Text = " + content.getText());
