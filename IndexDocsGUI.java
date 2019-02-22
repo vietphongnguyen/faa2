@@ -343,26 +343,13 @@ public class IndexDocsGUI extends JFrame {
 		JLabel lblNewLabel = new JLabel("From Page");
 		
 		spinnerFromPage = new JSpinner();
-		spinnerFromPage.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent arg0) {
-				// If from page change its value then update the to page value too
-				if (	(int)	spinnerToPage.getValue() < 	(int)	spinnerFromPage.getValue()	)
-					spinnerToPage.setValue((int)spinnerFromPage.getValue());
-				
-			}
-		});
+		
 		spinnerFromPage.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
 		
 		JLabel lblTo = new JLabel("To");
 		
 		spinnerToPage = new JSpinner();
-		spinnerToPage.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				// If from page change its value then update the from page value too
-				if (	(int)	spinnerToPage.getValue() < 	(int)	spinnerFromPage.getValue()	)
-					spinnerFromPage.setValue((int)spinnerToPage.getValue());
-			}
-		});
+		
 		spinnerToPage.setModel(new SpinnerNumberModel(new Integer(10), new Integer(1), null, new Integer(1)));
 		
 		lblLevelOfText = new JLabel("Level of text size");
@@ -517,6 +504,22 @@ public class IndexDocsGUI extends JFrame {
 	
 	private void createEvents() {
 
+		spinnerToPage.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				// If from page change its value then update the from page value too
+				if (	(int)	spinnerToPage.getValue() < 	(int)	spinnerFromPage.getValue()	)
+					spinnerFromPage.setValue((int)spinnerToPage.getValue());
+			}
+		});
+		spinnerFromPage.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent arg0) {
+				// If from page change its value then update the to page value too
+				if (	(int)	spinnerToPage.getValue() < 	(int)	spinnerFromPage.getValue()	)
+					spinnerToPage.setValue((int)spinnerFromPage.getValue());
+				
+			}
+		});
+		
 		mntmRestartThisApplication.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {

@@ -65,8 +65,12 @@ public class ParserMainContentPDF extends PDFTextStripper
 			
 			setSortByPosition(true);
 			
-			int fromPage = (int) IndexDocsGUI.spinnerFromPage.getValue();
-			int toPage = (int) IndexDocsGUI.spinnerToPage.getValue();
+			int fromPage=1, toPage=10;
+			try {
+				fromPage = (int) IndexDocsGUI.spinnerFromPage.getValue();
+				toPage = (int) IndexDocsGUI.spinnerToPage.getValue();
+			} catch (Exception e1) { }
+			
 			setStartPage(fromPage-1);
 			setEndPage( Math.min(toPage,document.getNumberOfPages()) );
 			
@@ -115,9 +119,6 @@ public class ParserMainContentPDF extends PDFTextStripper
     		String value = entry.getValue().trim() + " ";
     		textDataLevel.put(key, value);
     	}
-    	
-    	//System.out.println("Called inside the writeString method, text = " + text);
-				
     }
     
     private void sortedTextDataLevel() {
@@ -135,6 +136,11 @@ public class ParserMainContentPDF extends PDFTextStripper
 		text ="";
 		for (Entry<Integer, String> entry : sorted.entrySet()) {
 			s = entry.getValue().trim();
+			if (TextProcessing.containNoLetter(s)) {
+				sorted.remove(entry.getKey());
+				continue;
+			}
+			
 			//System.out.println("Key = " + entry.getKey() + ", Value = " + s);
 			int remain = maxNoCharacters - text.length();
 			if (remain <= 0)
