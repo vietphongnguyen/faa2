@@ -124,7 +124,8 @@ public class ParserMainContentDOCX {
 		
 		
 		int defaultFontSize = document.getStyles().getDefaultRunStyle().getFontSize();
-		HashMap <Integer,String> textDataLevel = new HashMap<>();
+		
+		TreeMap<Integer, String> textDataLevel = new TreeMap<>((Collections.reverseOrder()));
 		
 		int fromPage=1, toPage=10;
 		try {
@@ -164,16 +165,9 @@ public class ParserMainContentDOCX {
 			}
 		}
 
-		// Print the text content in textDataLevel
-		// TreeMap to store values of HashMap
-		TreeMap<Integer, String> sorted = new TreeMap<>((Collections.reverseOrder()));
-
-		// Copy all data from hashMap into TreeMap
-		sorted.putAll(textDataLevel);
-
 		// Display the TreeMap which is naturally sorted
 		int level = 0;
-		for (Entry<Integer, String> entry : sorted.entrySet()) {
+		for (Entry<Integer, String> entry : textDataLevel.entrySet()) {
 			String s;
 			s = entry.getValue().trim();
 			//System.out.println("Key = " + entry.getKey() + ", Value = " + s);
@@ -218,7 +212,7 @@ public class ParserMainContentDOCX {
 		String fileName = "C:\\FAA2\\data\\57017\\57017_Storyboards.docx";
 		String fileName2 = "C:\\FAA2\\data\\57017\\CDG_57017.docx";
 		try {
-			ParserMainContentDOCX content = new ParserMainContentDOCX(fileName,2,100);
+			ParserMainContentDOCX content = new ParserMainContentDOCX(fileName2,2);
 			System.out.println("Header = " + content.header);
 			System.out.println("Footer = " + content.footer);
 			System.out.println("Text = " + content.getText());

@@ -33,7 +33,9 @@ public class ParserMainContentPDF extends PDFTextStripper
 	public String header = "";
 	public String footer = "";
 	
-	HashMap <Integer,String> textDataLevel = new HashMap<>();
+	//HashMap <Integer,String> textDataLevel = new HashMap<>();
+	TreeMap<Integer, String> textDataLevel = new TreeMap<>((Collections.reverseOrder()));
+	
 	/**
 	 * 
 	 */
@@ -123,21 +125,14 @@ public class ParserMainContentPDF extends PDFTextStripper
     
     private void sortedTextDataLevel() {
 
-		// Print the text content in textDataLevel
-		// TreeMap to store values of HashMap
-		TreeMap<Integer, String> sorted = new TreeMap<>((Collections.reverseOrder()));
-
-		// Copy all data from hashMap into TreeMap
-		sorted.putAll(textDataLevel);
-
 		// Display the TreeMap which is naturally sorted
 		int level = 0;
 		String s;
 		text ="";
-		for (Entry<Integer, String> entry : sorted.entrySet()) {
+		for (Entry<Integer, String> entry : textDataLevel.entrySet()) {
 			s = entry.getValue().trim();
 			if (TextProcessing.containNoLetter(s)) {
-				sorted.remove(entry.getKey());
+				textDataLevel.remove(entry.getKey());
 				continue;
 			}
 			

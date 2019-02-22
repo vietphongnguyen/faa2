@@ -119,7 +119,9 @@ public class ParserMainContentDOC {
 		// ********** Collect the biggest paragraph in the content ****************/
 			
 		String[] paragraphs = we.getParagraphText();
-		HashMap <Integer,String> textDataLevel = new HashMap<>();
+		
+		TreeMap<Integer,String> textDataLevel = new TreeMap<>((Collections.reverseOrder())); 
+		
 		int fromPage=1, toPage=10;
 		try {
 			fromPage = (int) IndexDocsGUI.spinnerFromPage.getValue();
@@ -156,16 +158,9 @@ public class ParserMainContentDOC {
 		we.close();
 		doc.close();
 		
-		// Print the text content in textDataLevel
-		// TreeMap to store values of HashMap 
-        TreeMap<Integer,String> sorted = new TreeMap<>((Collections.reverseOrder())); 
-  
-        // Copy all data from hashMap into TreeMap 
-        sorted.putAll(textDataLevel); 
- 
         // Display the TreeMap which is naturally sorted 
         int currentLevel = 0;
-        for (Entry<Integer, String> entry : sorted.entrySet()) {  
+        for (Entry<Integer, String> entry : textDataLevel.entrySet()) {  
             int remainCharacters = maxNoCharacters - text.length();
             if (remainCharacters <=0 ) break;
             
@@ -206,7 +201,7 @@ public class ParserMainContentDOC {
 	public static void main(String[] args) {
 		String fileName = "C:\\FAA2\\data\\55146001\\CDG\\Final-ATCS CDG_2.doc";
 		try {
-			ParserMainContentDOC content = new ParserMainContentDOC(fileName);
+			ParserMainContentDOC content = new ParserMainContentDOC(fileName,3);
 			System.out.println("Header = " + content.header);
 			System.out.println("Footer = " + content.footer);
 			System.out.println("Text = " + content.getText());
