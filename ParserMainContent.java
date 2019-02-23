@@ -28,8 +28,10 @@ public class ParserMainContent {
 		RemoveHeaderFooterStopwords.init("HeaderFooterStopwords.txt");
 		FileInputStream stream = null;
 		
-		levelOfExtraction = (int) IndexDocsGUI.spinnerLevelTextSize.getValue();
-		maxNoCharacters= (int) IndexDocsGUI.spinnerMaxCharacter.getValue();
+		try {
+			levelOfExtraction = (int) IndexDocsGUI.spinnerLevelTextSize.getValue();
+			maxNoCharacters= (int) IndexDocsGUI.spinnerMaxCharacter.getValue();
+		} catch (Exception e1) {	}
 		
 		fileNameString = fileNameString.toLowerCase();
 		boolean properFileName = checkProperFileName(fileNameString);
@@ -37,8 +39,9 @@ public class ParserMainContent {
 		if (properFileName && fileNameString.endsWith(".doc")) {
 			ParserMainContentDOC mainContent;
 			try {
-				mainContent = new ParserMainContentDOC(fileNameString,levelOfExtraction,maxNoCharacters); // level Of Extraction = 2
-				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
+				mainContent = new ParserMainContentDOC(fileNameString,levelOfExtraction,maxNoCharacters); 
+				text = mainContent.header + mainContent.footer + mainContent.getText();
+				text = TextProcessing.getLetterNumberAndPunctuation(text);
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -48,8 +51,9 @@ public class ParserMainContent {
 		if (fileNameString.endsWith(".docx")) {
 			ParserMainContentDOCX mainContent;
 			try {
-				mainContent = new ParserMainContentDOCX(fileNameString,levelOfExtraction,maxNoCharacters); // level Of Extraction = 2
-				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
+				mainContent = new ParserMainContentDOCX(fileNameString,levelOfExtraction,maxNoCharacters); 
+				text = mainContent.header + mainContent.footer + mainContent.getText();
+				text = TextProcessing.getLetterNumberAndPunctuation(text);
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -59,13 +63,27 @@ public class ParserMainContent {
 		if (fileNameString.endsWith(".pdf")) {
 			ParserMainContentPDF mainContent;
 			try {
-				mainContent = new ParserMainContentPDF(fileNameString,levelOfExtraction,maxNoCharacters); // level Of Extraction = 2
-				text = mainContent.header + mainContent.footer + mainContent.getText().trim();
+				mainContent = new ParserMainContentPDF(fileNameString,levelOfExtraction,maxNoCharacters); 
+				text = mainContent.header + mainContent.footer + mainContent.getText();
+				text = TextProcessing.getLetterNumberAndPunctuation(text);
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		
+
+/*		if (fileNameString.endsWith(".ppt")) {
+			ParserMainContentPPT mainContent;
+			try {
+				mainContent = new ParserMainContentPPT(fileNameString,levelOfExtraction,maxNoCharacters); 
+				text = mainContent.header + mainContent.footer + mainContent.getText();
+				text = TextProcessing.getLetterNumberAndPunctuation(text);
+				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}*/
 		
 		// Use Auto Detect Parser for any other type of document
 		BodyContentHandler handler = new BodyContentHandler();
@@ -83,15 +101,19 @@ public class ParserMainContent {
 				stream.close();
 			} catch (IOException e) {}
 		}
-		text = handler.toString().trim();
-		if (text.length() > maxNoCharacters) {
+		String s = handler.toString();
+		
+		s = TextProcessing.getLetterNumberAndPunctuation(s);
+		
+		if (s.length() > maxNoCharacters) {
 			int vt = maxNoCharacters;
 			try {
-				while (Character.isLetter(text.charAt(vt))) vt--;
-				text = text.substring(0, vt);
+				while (Character.isLetter(s.charAt(vt))) vt--;
+				s = s.substring(0, vt);
 			} catch (Exception e) {	}
 		}
 		
+		text = s;
 		 
 	}
 
@@ -115,7 +137,10 @@ public class ParserMainContent {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		String fileName = "C:\\FAA2\\data\\LP08\\PRS08.ppt";
+		String fileName2 = "";
+		ParserMainContent content = new ParserMainContent(fileName);
+		System.out.println("Text = " + content.getText());
 
 	}
 

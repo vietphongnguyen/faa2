@@ -131,7 +131,7 @@ public class ParserMainContentPDF extends PDFTextStripper
 		String s;
 		text ="";
 
-		// Remove the entry with no Letter in its value
+		// Remove the entry with no Letter in its value in textDataLevel Tree Map
 		Iterator<Entry<Integer, String>> i = textDataLevel.entrySet().iterator();
 		Map.Entry<Integer, String> me;
 		while(i.hasNext()) {
