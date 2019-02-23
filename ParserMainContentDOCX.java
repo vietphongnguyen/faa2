@@ -76,6 +76,7 @@ public class ParserMainContentDOCX {
 			String key = h.getText().trim();
 			
 			key = RemoveHeaderFooterStopwords.removeStopwords(key);
+			key = TextProcessing.getLetterNumberAndPunctuation(key);
 			
 			if (key.isEmpty()) continue;
 			if (headerMap.containsKey(key) ) 
@@ -103,6 +104,7 @@ public class ParserMainContentDOCX {
 		for (XWPFFooter f : document.getFooterList()) {
 			String key = f.getText().trim();
 			key = RemoveHeaderFooterStopwords.removeStopwords(key);
+			key = TextProcessing.getLetterNumberAndPunctuation(key);
 			if (key.isEmpty()) continue;
 			if (footerMap.containsKey(key) ) 
 				value = footerMap.get(key)+1; 
@@ -145,7 +147,8 @@ public class ParserMainContentDOCX {
 			String s = para.getText().trim();
 			if (s.equals(""))
 				continue;
-
+			s += " \n";
+			
 			// System.out.println(para.getText());
 
 			for (XWPFRun run : para.getRuns()) {
@@ -158,9 +161,9 @@ public class ParserMainContentDOCX {
 					//System.out.println(fontSize);
 				}
 				if (textDataLevel.containsKey(fontSize))
-					textDataLevel.put(fontSize, textDataLevel.get(fontSize) + s + ". ");
+					textDataLevel.put(fontSize, textDataLevel.get(fontSize) + s);
 				else
-					textDataLevel.put(fontSize, s + ". ");
+					textDataLevel.put(fontSize, s );
 
 				break;
 			}

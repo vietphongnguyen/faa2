@@ -65,7 +65,7 @@ public class ParserMainContentPPT {
 			String key = h.getText().trim();
 			
 			key = RemoveHeaderFooterStopwords.removeStopwords(key);
-			
+			key = TextProcessing.getLetterNumberAndPunctuation(key);
 			if (key.isEmpty()) continue;
 			if (headerMap.containsKey(key) ) 
 				value = headerMap.get(key)+1; 
@@ -92,6 +92,7 @@ public class ParserMainContentPPT {
 		for (XWPFFooter f : document.getFooterList()) {
 			String key = f.getText().trim();
 			key = RemoveHeaderFooterStopwords.removeStopwords(key);
+			key = TextProcessing.getLetterNumberAndPunctuation(key);
 			if (key.isEmpty()) continue;
 			if (footerMap.containsKey(key) ) 
 				value = footerMap.get(key)+1; 

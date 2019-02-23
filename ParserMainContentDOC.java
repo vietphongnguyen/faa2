@@ -66,6 +66,7 @@ public class ParserMainContentDOC {
 		for (int i=1; i<= pageCount; i++) {
 			String key = headerStore.getHeader(i).trim();
 			key = RemoveHeaderFooterStopwords.removeStopwords(key);
+			key = TextProcessing.getLetterNumberAndPunctuation(key);
 			if (key.isEmpty()) continue;
 			if (headerMap.containsKey(key) ) 
 				value = headerMap.get(key)+1; 
@@ -95,6 +96,7 @@ public class ParserMainContentDOC {
 			
 			//System.out.print("Key = " + key);
 			key = RemoveHeaderFooterStopwords.removeStopwords(key);
+			key = TextProcessing.getLetterNumberAndPunctuation(key);
 			//System.out.println(" --> Key = " + key);
 			
 			if (key.isEmpty()) continue;
@@ -148,6 +150,7 @@ public class ParserMainContentDOC {
 				int fontSize = run.getFontSize();
 				String s = run.text().trim();
 				if (!s.equals("")) {
+					s += " \n";
 					if (textDataLevel.containsKey(fontSize))						
 						textDataLevel.put(fontSize, textDataLevel.get(fontSize) + s + ". " );
 					else textDataLevel.put(fontSize, s + ". " );

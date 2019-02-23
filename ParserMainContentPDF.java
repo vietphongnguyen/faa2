@@ -119,7 +119,7 @@ public class ParserMainContentPDF extends PDFTextStripper
     	// Put a space at the end of each line to separate with text in the next line 
     	for (Entry<Integer, String> entry : textDataLevel.entrySet()) {
     		int key = entry.getKey();
-    		String value = entry.getValue().trim() + " ";
+    		String value = entry.getValue().trim() + " \n";
     		textDataLevel.put(key, value);
     	}
     }
