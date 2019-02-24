@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,34 +25,55 @@ import org.xml.sax.SAXException;
 @SuppressWarnings("rawtypes")
 class createTextDataUsingTika extends SwingWorker {
 
-	String InputFolderName;
+	String ListInputFolderName;
 	String OutputFolderName;
 	String[] fileValues;
 	int count;
 	
 	// Constructor
-	public createTextDataUsingTika(String inputFolderName , String outputFolderName) throws IOException, SAXException, TikaException {
-		InputFolderName = inputFolderName;
+	public createTextDataUsingTika(String listInputFolderName , String outputFolderName) throws IOException, SAXException, TikaException {
+		ListInputFolderName = listInputFolderName;
 		OutputFolderName = outputFolderName;
 		}
 	
-	@SuppressWarnings("unchecked")
-	protected Object doInBackground() throws Exception {
-		String inputFolderName = InputFolderName;
-		String outputFolderName = OutputFolderName;
-		Outln("Extracting text data from [" + inputFolderName + "] to [" + outputFolderName + "] ...");
+	@SuppressWarnings({ "unchecked", "null" })
+	protected Object doInBackground() {
 		
-		FileUtils.deleteDirectory(new File(outputFolderName )); // Delete the old file in this directory
-		Out("Deleted all of the old files in the directory ["+ outputFolderName +"] successfully \n");
+		String outputFolderName = OutputFolderName;
+		Outln("Extracting text data to [" + outputFolderName + "] ...");
+		
+		// Delete the old file in this directory
+		try {
+			FileUtils.deleteDirectory(new File(outputFolderName ));
+			Out("Deleted all of the old files in the directory ["+ outputFolderName +"] successfully \n");
+		} catch (IOException e) {
+			Out("Error in deleting the old files in the directory ["+ outputFolderName +"] \n" + e.getMessage());
+			e.printStackTrace();
+			return null;
+		} 
+		
 		IndexDocsGUI.JListOfFiles.clear();
 		
 		if (new File(outputFolderName).mkdir()) {
 			//Out("Make folder '"+ folder +"' successfully \n");
 		}
+		List<String> listFileName = new ArrayList<String>()  , 
+				listFileName2 = new ArrayList<String>();
+		for (String inputFolderName : ListInputFolderName.split("\n") ) {
+			if (inputFolderName.length() <=0 ) continue;
+			try {
+				listFileName2 = Files.walk(Paths.get(inputFolderName))
+						.filter(Files::isRegularFile)
+						.map(x -> x.toString()).collect(Collectors.toList());
+				
+				listFileName.addAll(listFileName2);
+				
+			} catch (IOException e) {
+				Out("Warning: CANNOT get files in [" + inputFolderName + "]  \n" + e.getMessage());
+				e.printStackTrace();
+			}
+		}
 		
-		List<String> listFileName = Files.walk(Paths.get(inputFolderName))
-				.filter(Files::isRegularFile)
-				.map(x -> x.toString()).collect(Collectors.toList());
 		
 		int totalNoFile = listFileName.size();
 		IndexDocsGUI.list = new JList(IndexDocsGUI.JListOfFiles);
@@ -98,14 +120,21 @@ class createTextDataUsingTika extends SwingWorker {
 				
 				String outputFileName = toFileName(fileNameString);
 				if (IndexDocsGUI.chckbxEnglishOnly.isSelected() ) {
-
-					LanguageDetector detector = new OptimaizeLangDetector().loadModels();
-			        LanguageResult result = detector.detect(s);
-			        String language = result.getLanguage();
+					String language = "Not detected";
+					LanguageDetector detector;
+					try {
+						detector = new OptimaizeLangDetector().loadModels();
+						LanguageResult result = detector.detect(s);
+				        language = result.getLanguage();
+					} catch (IOException e) {
+						Out("Warning: CANNOT detect language in file [" + fileNameString + "]  \n" + e.getMessage());
+						e.printStackTrace();
+					}
+			        
 			        
 					// System.out.println("Language of text:" + language);
 					if ((!(language.equalsIgnoreCase("en") || language.equalsIgnoreCase("et")))) {
-						igroreExtractingFile("Warning: the content of the file:" + outputFileName + " have NOT been writen in English then this file will be ignored!",
+						igroreExtractingFile("Warning: the content of the file [" + outputFileName + "] have NOT been writen in English then this file will be ignored!",
 								(count + 1) + " [" + language + "]________ " + outputFileName);
 						continue;
 					}

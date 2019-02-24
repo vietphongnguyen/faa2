@@ -48,7 +48,7 @@ public class ParserMainContent {
 			}
 		}
 
-		if (fileNameString.endsWith(".docx")) {
+		if (properFileName && fileNameString.endsWith(".docx")) {
 			ParserMainContentDOCX mainContent;
 			try {
 				mainContent = new ParserMainContentDOCX(fileNameString,levelOfExtraction,maxNoCharacters); 
@@ -123,7 +123,7 @@ public class ParserMainContent {
 			if (	!Character.isLetterOrDigit(fileNameString.charAt(i))	
 					&& fileNameString.charAt(i) != ' ' && fileNameString.charAt(i) != '\\' && fileNameString.charAt(i) != ':'
 					&& fileNameString.charAt(i) != '.' && fileNameString.charAt(i) != '_'&& fileNameString.charAt(i) != '-' 
-					&& fileNameString.charAt(i) != '/'			)  {
+					&& fileNameString.charAt(i) != '/'	&& fileNameString.charAt(i) != '\''		)  {
 				OK = false;
 				break;
 			}
@@ -138,8 +138,8 @@ public class ParserMainContent {
 	 */
 	public static void main(String[] args) {
 		String fileName = "C:\\FAA2\\data\\LP08\\PRS08.ppt";
-		String fileName2 = "";
-		ParserMainContent content = new ParserMainContent(fileName);
+		String fileName2 = "D:\\Phong's window datas\\FAA - SA249\\Desktop\\FAA Indexed Courses\\50019\\Course Documentation\\CDG\\archive\\2002 comparisons\\CDGlpobjcomparisonDIRECTIVELOAsLOPsLTAs.doc";
+		ParserMainContent content = new ParserMainContent(fileName2);
 		System.out.println("Text = " + content.getText());
 
 	}

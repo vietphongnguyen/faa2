@@ -64,16 +64,20 @@ public class ParserMainContentDOC {
 		int max =0;
 		int value;
 		for (int i=1; i<= pageCount; i++) {
-			String key = headerStore.getHeader(i).trim();
-			key = RemoveHeaderFooterStopwords.removeStopwords(key);
-			key = TextProcessing.getLetterNumberAndPunctuation(key);
-			if (key.isEmpty()) continue;
-			if (headerMap.containsKey(key) ) 
-				value = headerMap.get(key)+1; 
-			else 
-				value =1; 
-			headerMap.put(key,value );
-			if (max < value) max = value;
+			String key="";
+			try {
+				key = headerStore.getHeader(i).trim();
+				key = RemoveHeaderFooterStopwords.removeStopwords(key);
+				key = TextProcessing.getLetterNumberAndPunctuation(key);
+				if (key.isEmpty()) continue;
+				if (headerMap.containsKey(key) ) 
+					value = headerMap.get(key)+1; 
+				else 
+					value =1; 
+				headerMap.put(key,value );
+				if (max < value) max = value;
+			} catch (Exception e) {}
+			
 		}
 		//System.out.println("Max = " +max);
 		//System.out.print("Header Is: " );
@@ -92,20 +96,22 @@ public class ParserMainContentDOC {
 		HashMap <String, Integer> footerMap = new HashMap<>();
 		max =0;
 		for (int i=1; i<= pageCount; i++) {
-			String key = headerStore.getFooter(i).trim();
-			
-			//System.out.print("Key = " + key);
-			key = RemoveHeaderFooterStopwords.removeStopwords(key);
-			key = TextProcessing.getLetterNumberAndPunctuation(key);
-			//System.out.println(" --> Key = " + key);
-			
-			if (key.isEmpty()) continue;
-			if (footerMap.containsKey(key) ) 
-				value = footerMap.get(key)+1; 
-			else 
-				value =1; 
-			footerMap.put(key,value );
-			if (max < value) max = value;
+			try {
+				String key = headerStore.getFooter(i).trim();
+				
+				//System.out.print("Key = " + key);
+				key = RemoveHeaderFooterStopwords.removeStopwords(key);
+				key = TextProcessing.getLetterNumberAndPunctuation(key);
+				//System.out.println(" --> Key = " + key);
+				
+				if (key.isEmpty()) continue;
+				if (footerMap.containsKey(key) ) 
+					value = footerMap.get(key)+1; 
+				else 
+					value =1; 
+				footerMap.put(key,value );
+				if (max < value) max = value;
+			} catch (Exception e) {}
 		}
 		//System.out.println("Max = " +max);
 		//System.out.print("Footer Is: " );

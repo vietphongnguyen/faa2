@@ -270,12 +270,11 @@ public class IndexDocsGUI extends JFrame {
 					.addGap(1))
 		);
 		gl_contentPane.setVerticalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
-					.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 507, Short.MAX_VALUE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
-					.addGap(20))
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(tabbedPane, GroupLayout.PREFERRED_SIZE, 497, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE))
 		);
 
 		JLayeredPane layeredPane = new JLayeredPane();
@@ -578,7 +577,7 @@ public class IndexDocsGUI extends JFrame {
 			@Override
 			public void focusLost(FocusEvent e) {
 				String s = txtDatatextfolder.getText();
-				s = getFoulderNameOf(s);
+				s = getFolderNameOf(s);
 				if (s == "")
 					s = "data_text";
 				txtDatatextfolder.setText(s);
@@ -591,7 +590,7 @@ public class IndexDocsGUI extends JFrame {
 			public void mouseExited(MouseEvent e) {
 				if (!tglbtnUsedefaultdatatext.isSelected()) {
 					// update text output folder name
-					txtDatatextfolder.setText(getFoulderNameOf(txtrCdata.getText()) + "_text");
+					txtDatatextfolder.setText(getFolderNameOf(txtrCdata.getText()) + "_text");
 					txtDatatextfolder.setEditable(true);
 				}
 			}
@@ -602,7 +601,7 @@ public class IndexDocsGUI extends JFrame {
 			public void keyTyped(KeyEvent e) {
 				if (!tglbtnUsedefaultdatatext.isSelected()) {
 					// update text output folder name
-					txtDatatextfolder.setText(getFoulderNameOf(txtrCdata.getText()) + "_text");
+					txtDatatextfolder.setText(getFolderNameOf(txtrCdata.getText()) + "_text");
 					txtDatatextfolder.setEditable(true);
 				}
 			}
@@ -616,7 +615,7 @@ public class IndexDocsGUI extends JFrame {
 					txtDatatextfolder.setText("data_text");
 					txtDatatextfolder.setEditable(false);
 				} else {
-					txtDatatextfolder.setText(getFoulderNameOf(txtrCdata.getText()) + "_text");
+					txtDatatextfolder.setText(getFolderNameOf(txtrCdata.getText()) + "_text");
 					txtDatatextfolder.setEditable(true);
 				}
 			}
@@ -670,8 +669,8 @@ public class IndexDocsGUI extends JFrame {
 		btnXCancel.setEnabled(true);
 		process_createTextDataUsingTika = null;
 		try {
-			process_createTextDataUsingTika = new createTextDataUsingTika(getFoulderNameOf(txtrCdata.getText()),
-					getFoulderNameOf(txtDatatextfolder.getText()));
+			process_createTextDataUsingTika = new createTextDataUsingTika(getListFolderNameOf(txtrCdata.getText()),
+					getFolderNameOf(txtDatatextfolder.getText()));
 		} catch (IOException e2) {
 			e2.printStackTrace();
 			Outln(e2.toString());
@@ -692,23 +691,22 @@ public class IndexDocsGUI extends JFrame {
 		}
 	}
 
-	protected String getFoulderNameOf(String text) {
+	private String getListFolderNameOf(String text) {
+		String[] listFolder = text.split("\n");
+		String output="", s;
+		for (String folder: listFolder) {
+			s = getFolderNameOf(folder);
+			if (s.length()>0) {
+				output += s + "\n";
+			}
+		}
+		return output;
+	}
+	protected String getFolderNameOf(String text) {
 		String s = text;
+		s = s.trim().split("\n")[0].trim();
 
-		// delete newline and space at the beginning of S
-		while ((s.length() > 0) && ((s.charAt(0) == '\n') || (s.charAt(0) == ' ')))
-			s = s.substring(1);
-
-		int vtnewline = s.indexOf('\n');
-		if (vtnewline < 0)
-			vtnewline = s.length();
-		String fouldername = s.substring(0, vtnewline);
-
-		// delete newline and space at the ending of fouldername
-		while ((fouldername.length() > 0) && ((fouldername.endsWith("\n") || (fouldername.endsWith(" ")))))
-			fouldername = fouldername.substring(0, fouldername.length() - 1);
-
-		return fouldername;
+		return s;
 	}
 
 	public IndexDocsGUI() throws IOException {
