@@ -130,15 +130,17 @@ public class ParserMainContentDOCX {
 		
 		TreeMap<Integer, String> textDataLevel = new TreeMap<>((Collections.reverseOrder()));
 		
-		int fromPage=1, toPage=10;
+		int fromPage=1, toPage=5;
 		try {
-			fromPage = (int) IndexDocsGUI.spinnerFromPage.getValue();
+			// ****  Disable from page for now because the page break method cannot detect the new page.
+			//fromPage = (int) IndexDocsGUI.spinnerFromPage.getValue();
 			toPage = (int) IndexDocsGUI.spinnerToPage.getValue();
 		} catch (Exception e1) { }
 		
 		int pageNumber=1;
 		for (XWPFParagraph para : paragraphs) {
 			if (para.isPageBreak()) {
+				//System.out.println("-------- Page Break ------- ");
 				pageNumber++;
 				if (pageNumber > toPage) break;
 			}
@@ -149,10 +151,11 @@ public class ParserMainContentDOCX {
 				continue;
 			s += " \n";
 			
-			// System.out.println(para.getText());
+			//System.out.println(para.getText());
 
 			for (XWPFRun run : para.getRuns()) {
 				int fontSize = run.getFontSize();
+				
 				// System.out.print("fontSize = " +fontSize + ". Final: ");
 				if (fontSize == -1) {
 					//System.out.println(defaultFontSize);
@@ -160,6 +163,10 @@ public class ParserMainContentDOCX {
 				} else {
 					//System.out.println(fontSize);
 				}
+				fontSize = fontSize * 2;
+				if (run.isBold()) fontSize = fontSize+ 2 ;
+				//System.out.println("getUnderline = " + run.getUnderline().name());
+				if ( !run.getUnderline().name().equalsIgnoreCase("none") )  fontSize ++;
 				if (textDataLevel.containsKey(fontSize))
 					textDataLevel.put(fontSize, textDataLevel.get(fontSize) + s);
 				else
@@ -226,7 +233,7 @@ public class ParserMainContentDOCX {
 		String fileName = "C:\\FAA2\\data\\57017\\57017_Storyboards.docx";
 		String fileName2 = "C:\\FAA2\\data\\57017\\CDG_57017.docx";
 		try {
-			ParserMainContentDOCX content = new ParserMainContentDOCX(fileName2,2);
+			ParserMainContentDOCX content = new ParserMainContentDOCX(fileName2,1);
 			System.out.println("Header = " + content.header);
 			System.out.println("Footer = " + content.footer);
 			System.out.println("Text = " + content.getText());

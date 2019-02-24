@@ -355,7 +355,7 @@ public class IndexDocsGUI extends JFrame {
 		lblLevelOfText = new JLabel("Level of text size");
 		
 		spinnerLevelTextSize = new JSpinner();
-		spinnerLevelTextSize.setModel(new SpinnerNumberModel(new Integer(3), new Integer(1), null, new Integer(1)));
+		spinnerLevelTextSize.setModel(new SpinnerNumberModel(new Integer(5), new Integer(1), null, new Integer(1)));
 		
 		lblMaxNumberOf = new JLabel("Max number of Characters");
 		

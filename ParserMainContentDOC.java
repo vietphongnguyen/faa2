@@ -138,7 +138,7 @@ public class ParserMainContentDOC {
 			int estimatedCurPageNumber = (int) ( (pageCount-1) * i / (paragraphs.length-1) + 1 );
 			if (pr.pageBreakBefore()) {
 				pageNumber++;
-				if (Math.min(pageNumber,estimatedCurPageNumber) > toPage) break;
+				if (pageNumber > toPage) break;
 			}
 			if (Math.max(pageNumber,estimatedCurPageNumber) < fromPage) continue;	
 			
@@ -147,7 +147,8 @@ public class ParserMainContentDOC {
 			int k = 0;
 			while (true) {
 				CharacterRun run = pr.getCharacterRun(k++);
-				int fontSize = run.getFontSize();
+				int fontSize = run.getFontSize()*2;
+				if (run.isBold()) fontSize++;
 				String s = run.text().trim();
 				if (!s.equals("")) {
 					s += " \n";
@@ -215,7 +216,7 @@ public class ParserMainContentDOC {
 	public static void main(String[] args) {
 		String fileName = "C:\\FAA2\\data\\55146001\\CDG\\Final-ATCS CDG_2.doc";
 		try {
-			ParserMainContentDOC content = new ParserMainContentDOC(fileName,3);
+			ParserMainContentDOC content = new ParserMainContentDOC(fileName,1);
 			System.out.println("Header = " + content.header);
 			System.out.println("Footer = " + content.footer);
 			System.out.println("Text = " + content.getText());
