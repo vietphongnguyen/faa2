@@ -20,12 +20,13 @@ import org.apache.commons.io.IOUtils;
 public class RemoveHeaderFooterStopwords {
 
 	static List<String> stopwords = new LinkedList<String>();
+	static List<String> regexs = new LinkedList<String>();
 	
 	/**
 	 * 
 	 */
 	public RemoveHeaderFooterStopwords() {
-		// TODO Auto-generated constructor stub
+		RemoveHeaderFooterStopwords.init("HeaderFooterStopwords.txt");
 	}
 
 	/**
@@ -49,10 +50,15 @@ public class RemoveHeaderFooterStopwords {
 	}
 
 	public static String removeStopwords(String input) {
-		if (stopwords.isEmpty()) {
+		if (	stopwords.isEmpty() && regexs.isEmpty()	) {
 			RemoveHeaderFooterStopwords.ForceInit("HeaderFooterStopwords.txt");
 		}
+		
 		String output = " " + input.toLowerCase() + " ";
+		
+		for (String regex : regexs) {
+			output = output.replaceAll(regex," ");    
+		}
 		
 		for (String word : stopwords) {
 			int start = 0;
@@ -75,50 +81,46 @@ public class RemoveHeaderFooterStopwords {
 	    }
 		
 		// Clean output
-		String acceptCharacter = " .";
-		for (int i =0; i< output.length() ; i++) {
-			if (	!Character.isLetterOrDigit(output.charAt(i)) 	&&  acceptCharacter.indexOf(output.charAt(i)) < 0	 )
-				output = output.substring(0, i) + " " + output.substring(i+1); // replace with space
-		}
-		
-		
-		
-		output = output.replaceAll(" \\.", ".").replaceAll("\\.\\.", ".");
-		output = output.replaceAll("\\s{2,}", " ").replaceAll(" \\.", ".").trim();
-		output = output.replaceAll("page [0-9]+"," ");    // remove Page 10, page 20 ....
-		
-		boolean hasLetter = false;		// Check if there is no letter in the string then return ""
-		for (int i =0; i< output.length() ; i++) {
-			if (	Character.isLetter(output.charAt(i)) 	 ) {
-				hasLetter = true;
-				break;
-			}
-		}
-		if (!hasLetter) output = "";
+		output = TextProcessing.getLetterNumberAndPunctuation(output);
 		
 		return output;
 	}
 
 	public static void init(String filename) {
-		if (!stopwords.isEmpty()) {
+		if (	!stopwords.isEmpty() || !regexs.isEmpty()	) {
 			return;
 		}
 		ForceInit(filename);
 	}
 	public static void ForceInit(String filename) {
 		try(BufferedReader br = new BufferedReader(new FileReader(filename))) {
-		    String line = br.readLine();
+		    String line, regex;
 
-		    while (line != null) {
-		        line = line.trim().toLowerCase();
-		    	if (!line.equals("") && !stopwords.contains(line) ) {
-		        	stopwords.add(line);
-		        }
-		        line = br.readLine();
+		    while ((line = br.readLine()) != null) {
+		    	try {
+					// test if the line is a comment line from // 
+					line = line.split("//")[0];
+					line = line.trim().toLowerCase();
+					if (line.indexOf("regex:")==0) { 
+						regex = line.substring(6).trim();
+						if (!regex.equals("") && !regexs.contains(regex) ) {
+							regexs.add(regex);
+					    }
+						continue;
+					}
+					else if (!line.equals("") && !stopwords.contains(line) ) {
+						stopwords.add(line);
+					}
+				} catch (Exception e) {}
 		    }
 		    
-		    /*for (String word : stopwords) {
+		    /*System.out.println("-----------  Stopword: -----------");
+		    for (String word : stopwords) {
 		    	System.out.println(word);
+		    }
+		    System.out.println("-----------  RegEx: -----------");
+		    for (String r : regexs) {
+		    	System.out.println(r);
 		    }*/
 		} catch (IOException e) {
 			e.printStackTrace();

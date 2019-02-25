@@ -26,6 +26,7 @@ public class ParserMainContent {
 	 */
 	public ParserMainContent(String fileNameString) {
 		RemoveHeaderFooterStopwords.init("HeaderFooterStopwords.txt");
+		ContentStopWords.init("ContentStopwords.txt");
 		FileInputStream stream = null;
 		
 		try {
@@ -137,9 +138,9 @@ public class ParserMainContent {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		String fileName = "C:\\FAA2\\data\\LP08\\PRS08.ppt";
+		String fileName = "C:\\FAA2\\data\\60004807\\PDFs\\JO7110.65_p2-1-21.pdf";
 		String fileName2 = "D:\\Phong's window datas\\FAA - SA249\\Desktop\\FAA Indexed Courses\\50019\\Course Documentation\\CDG\\archive\\2002 comparisons\\CDGlpobjcomparisonDIRECTIVELOAsLOPsLTAs.doc";
-		ParserMainContent content = new ParserMainContent(fileName2);
+		ParserMainContent content = new ParserMainContent(fileName);
 		System.out.println("Text = " + content.getText());
 
 	}

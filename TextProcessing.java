@@ -9,6 +9,9 @@ package indexDocs;
  */
 public class TextProcessing {
 
+	static int MinLengthOfAWord = 1;
+	static int MaxLengthOfAWord = 100;
+	
 	/**
 	 * 
 	 */
@@ -22,16 +25,16 @@ public class TextProcessing {
 	public static void main(String[] args) {
 		System.out.println(getLetterNumberAndPunctuation(" & text = ;!? he ( ) : '  \"    end \\ tiep {} tiep2  [] += tiep3 - t4 _ \n------------------")	);
 		
-		System.out.println(getLetterNumberAndPunctuation(" V.1.00\r\n" + 
-				"Presented by:\r\n" + 
-				"Initial Separation of Arriving and Departing Aircraft\r\n" + 
-				"*\r\n:;" + 
-				"\r\n ---- te**st  ." + 
-				"\r\n" + 
-				"*\r\n" + 
-				"Initial Separation of Arriving and Departing Aircraft / V.1.00\r\n" + 
-				"\r\n" + 
-				"Gain Attention")	);
+		System.out.println(getLetterNumberAndPunctuation(" BIRD ACTIVITY INFORMATION \r\n" + 
+				"2 1 25. \r\n" + 
+				"SUPERVISORY NOTIFICATION. 6. \r\n" + 
+				"a. \r\n" + 
+				"1. \r\n" + 
+				"2. \r\n" + 
+				"7. \r\n" + 
+				"8. \r\n" + 
+				"3. \r\n" + 
+				"4. ")	);
 
 	}
 
@@ -75,6 +78,9 @@ public class TextProcessing {
 	private static String removeDuplicatePunctuation(String s) {
 		String output="";
 		Character ch;
+		int wordLength = 0;
+		String word ="";
+		s += " "; // put a non-word at the end to make sure the word extraction word correctly
 		boolean point = false , comma = false, space = false, lineSeparator = false, isTheFisrtWord =true;
 		for (int i = 0; i< s.length(); i++) {
 			ch = s.charAt(i);
@@ -93,7 +99,8 @@ public class TextProcessing {
 						isTheFisrtWord =true;
 					}
 				}
-				output += ch;
+				word += ch;
+				wordLength++;
 				point = false;
 				comma = false;
 				space = false;
@@ -101,7 +108,12 @@ public class TextProcessing {
 				isTheFisrtWord =false;
 				continue;
 			}
-
+			
+			//if (wordLength >= MinLengthOfAWord  &&  wordLength <= MaxLengthOfAWord ) 
+				output+= "" + word ;
+			word ="";
+			wordLength = 0;
+			
 			if (ch == '\n' || ch == '\r' || ch == Character.LINE_SEPARATOR 	) {
 				lineSeparator = true;
 				continue;
@@ -120,5 +132,7 @@ public class TextProcessing {
 		
 		return output;
 	}
+
+
 
 }

@@ -61,6 +61,7 @@ public class ParserMainContentDOCX {
 		levelOfExtraction = levelSet;
 		maxNoCharacters = maxChar;
 		RemoveHeaderFooterStopwords.init("HeaderFooterStopwords.txt");
+		
 		FileInputStream fis = new FileInputStream(fileNameString);
 
 		XWPFDocument document = new XWPFDocument(fis);
