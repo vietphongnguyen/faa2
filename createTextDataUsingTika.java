@@ -108,7 +108,14 @@ class createTextDataUsingTika extends SwingWorker {
 					cancelTikaProcess(); 
 					return -1; 
 				}
-				ParserMainContent mainContent = new ParserMainContent(fileNameString);
+				ParserMainContent mainContent = null;
+				try {
+					mainContent = new ParserMainContent(fileNameString);
+				} catch (NotificationException e1) {
+					igroreExtractingFile("Warning: [" + fileNameString+ "] " + e1.getMessage(),
+							(count+1) + " ________ " + fileNameString);
+					continue;
+				}
 				String s = mainContent.getText();
 				
 				if (s.equalsIgnoreCase("")) {

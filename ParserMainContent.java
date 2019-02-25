@@ -22,9 +22,24 @@ public class ParserMainContent {
 	int maxNoCharacters = 500 ; 
 	
 	/**
+	 * @throws NotificationException 
 	 * 
 	 */
-	public ParserMainContent(String fileNameString) {
+	public ParserMainContent(String fileNameString) throws NotificationException {
+		
+		String allowedFileType = ".doc .docx .pdf .ppt";
+		
+		try {
+			allowedFileType += " ";
+			int i = fileNameString.lastIndexOf('.');
+			String extension = fileNameString.substring(i)+" ";
+			
+			if (allowedFileType.indexOf(extension) < 0) throw new NotificationException(" the file extension is not allowed! ");
+		} catch (Exception e2) {
+			e2.printStackTrace();
+			throw new NotificationException(" the file extension is not allowed! ");
+		}
+		
 		RemoveHeaderFooterStopwords.init("HeaderFooterStopwords.txt");
 		ContentStopWords.init("ContentStopwords.txt");
 		FileInputStream stream = null;
@@ -42,7 +57,10 @@ public class ParserMainContent {
 			try {
 				mainContent = new ParserMainContentDOC(fileNameString,levelOfExtraction,maxNoCharacters); 
 				text = mainContent.header + mainContent.footer + mainContent.getText();
-				text = TextProcessing.getLetterNumberAndPunctuation(text);
+				
+				text = ContentStopWords.removeStopwords(text);
+				//text = TextProcessing.getLetterNumberAndPunctuation(text);
+				
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -55,6 +73,7 @@ public class ParserMainContent {
 				mainContent = new ParserMainContentDOCX(fileNameString,levelOfExtraction,maxNoCharacters); 
 				text = mainContent.header + mainContent.footer + mainContent.getText();
 				text = TextProcessing.getLetterNumberAndPunctuation(text);
+				text = ContentStopWords.removeStopwords(text);
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -66,7 +85,10 @@ public class ParserMainContent {
 			try {
 				mainContent = new ParserMainContentPDF(fileNameString,levelOfExtraction,maxNoCharacters); 
 				text = mainContent.header + mainContent.footer + mainContent.getText();
-				text = TextProcessing.getLetterNumberAndPunctuation(text);
+				
+				text = ContentStopWords.removeStopwords(text);
+				//text = TextProcessing.getLetterNumberAndPunctuation(text);
+				
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -79,7 +101,10 @@ public class ParserMainContent {
 			try {
 				mainContent = new ParserMainContentPPT(fileNameString,levelOfExtraction,maxNoCharacters); 
 				text = mainContent.header + mainContent.footer + mainContent.getText();
-				text = TextProcessing.getLetterNumberAndPunctuation(text);
+				
+				text = ContentStopWords.removeStopwords(text);
+				//text = TextProcessing.getLetterNumberAndPunctuation(text);
+				 * 
 				if (!text.equals("")) return;		// if get some text data out of this Doc file then exit, else continue to try other parser
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -104,7 +129,8 @@ public class ParserMainContent {
 		}
 		String s = handler.toString();
 		
-		s = TextProcessing.getLetterNumberAndPunctuation(s);
+		s = ContentStopWords.removeStopwords(s);
+		//s = TextProcessing.getLetterNumberAndPunctuation(s);
 		
 		if (s.length() > maxNoCharacters) {
 			int vt = maxNoCharacters;
